@@ -1,9 +1,10 @@
 package com.dx.proxypool.timetask;
 
-import com.dx.proxypool.bean.ProxyBean;
-import com.dx.proxypool.util.RedisUtil;
-import com.dx.proxypool.util.SpiderUtil;
-import net.sf.json.JSONObject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import com.dx.proxypool.service.AvailableService;
 import org.apache.commons.collections.CollectionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.dx.proxypool.bean.ProxyBean;
+import com.dx.proxypool.service.MNProxyService;
+import com.dx.proxypool.util.RedisUtil;
+import com.dx.proxypool.util.SpiderUtil;
+
+import net.sf.json.JSONObject;
 
 /**
  * Created by daixiang on 2018/3/8.
@@ -31,6 +34,12 @@ public class TimeTask {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private MNProxyService mnProxyService;
+
+    @Autowired
+    private AvailableService availableService;
 
     @Scheduled(cron = "0 0/1 * * * ?")
     public void syncTask() throws IOException {
@@ -50,12 +59,12 @@ public class TimeTask {
         String lastProxy = (String) redisUtil.get("last");
         ProxyBean lastProxyBean = (ProxyBean) JSONObject.toBean(JSONObject.fromObject(lastProxy), ProxyBean.class);
 
-        List<ProxyBean> proxies = SpiderUtil.analysisHtml(document, lastProxyBean);
+        List<ProxyBean> proxies = mnProxyService.analysisHtml(document, lastProxyBean);
         if (!CollectionUtils.isEmpty(proxies)) {
             redisUtil.add("last", JSONObject.fromObject(proxies.get(proxies.size() - 1)).toString());
         }
-        proxies.stream().filter(a -> SpiderUtil.isAvailable(a))
-                .forEach(b -> redisUtil.add(b.getIp(), JSONObject.fromObject(b).toString()));
+
+        proxies.stream().forEach(b -> availableService.isAvailable(b));
 
     }
 
