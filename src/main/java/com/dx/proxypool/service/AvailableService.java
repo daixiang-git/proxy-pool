@@ -7,5 +7,5 @@ import com.dx.proxypool.bean.ProxyBean;
  */
 
 public interface AvailableService {
-    boolean isAvailable(ProxyBean proxyBean);
+    void isAvailable(ProxyBean proxyBean);
 }

@@ -20,11 +20,9 @@ public class AvailableServiceImpl implements AvailableService {
 
     @Override
     @Async("asyncServiceExecutor")
-    public boolean isAvailable(ProxyBean proxyBean) {
+    public void isAvailable(ProxyBean proxyBean) {
         if (SpiderUtil.isAvailable(proxyBean)) {
             redisUtil.add(proxyBean.getIp(), JSONObject.fromObject(proxyBean).toString());
-            return true;
         }
-        return false;
     }
 }

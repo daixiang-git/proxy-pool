@@ -1,10 +1,16 @@
 package com.dx.proxypool.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dx.proxypool.bean.ProxyBean;
 
@@ -13,6 +19,10 @@ import com.dx.proxypool.bean.ProxyBean;
  */
 
 public class SpiderUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpiderUtil.class);
+
+    private static final String PHANTOMJS = "/Users/daixiang/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs /Users/daixiang/IdeaProjects/proxy-pool/src/main/resources/code.js ";
 
     // ip验证url
     private static final String IPVALIDATEURL = "http://www.ip138.com/";
@@ -46,10 +56,25 @@ public class SpiderUtil {
             return false;
         }
         String text = elements.get(0).text().trim();
-        System.out.println(proxyBean.getIp() + ":" + proxyBean.getLocation());
-        System.out.println(text);
-        System.out.println("---------------------------------");
-        return text.contains(proxyBean.getIp()) ? true : false;
+        if (text.contains(proxyBean.getIp())) {
+            logger.info(text);
+            proxyBean.setValidateTime(new Date());
+            return true;
+        }
+        return false;
 
+    }
+
+    public static Document getByPhantomjs(String url) throws IOException {
+        Runtime rt = Runtime.getRuntime();
+        String exec = PHANTOMJS + url;
+        Process p = rt.exec(exec);
+        InputStream is = p.getInputStream();
+        return Jsoup.parse(is, "utf-8", url);
+    }
+
+    public static Document getByHttpRequest(String url) {
+        String html = HttpRequest.sendGet(url, null);
+        return Jsoup.parse(html);
     }
 }

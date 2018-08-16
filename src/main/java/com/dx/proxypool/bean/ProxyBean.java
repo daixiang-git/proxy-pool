@@ -2,6 +2,8 @@ package com.dx.proxypool.bean;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * Created by daixiang on 2018/8/1.
  */
@@ -32,5 +34,7 @@ public class ProxyBean {
     private boolean Post;
     // 延迟m
     private String delay;
+
+    private Date validateTime;
 
 }

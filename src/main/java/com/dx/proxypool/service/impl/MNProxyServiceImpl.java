@@ -1,4 +1,4 @@
-package com.dx.proxypool.service;
+package com.dx.proxypool.service.impl;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,13 +10,15 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import com.dx.proxypool.bean.ProxyBean;
+import com.dx.proxypool.common.ProxyTypeEnum;
+import com.dx.proxypool.service.AnalysisService;
 import com.google.common.collect.Lists;
 
 /**
  * Created by daixiang on 2018/8/2.
  */
 @Service
-public class MNProxyService implements BaseService {
+public class MNProxyServiceImpl implements AnalysisService {
 
     @Override
     public List<ProxyBean> analysisHtml(Document document, ProxyBean lastProxyBean) {
@@ -49,5 +51,10 @@ public class MNProxyService implements BaseService {
             proxyBeanList.add(proxyBean);
         }
         return proxyBeanList;
+    }
+
+    @Override
+    public ProxyTypeEnum supportType() {
+        return ProxyTypeEnum.MN;
     }
 }

@@ -19,10 +19,13 @@ public class HttpRequest {
         BufferedReader in = null;
         try {
             URL realUrl = new URL(url);
-
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyBean.getIp(), proxyBean.getPort()));
-
-            URLConnection connection = realUrl.openConnection(proxy);
+            URLConnection connection;
+            if (proxyBean != null) {
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyBean.getIp(), proxyBean.getPort()));
+                connection = realUrl.openConnection(proxy);
+            } else {
+                connection = realUrl.openConnection();
+            }
 
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
