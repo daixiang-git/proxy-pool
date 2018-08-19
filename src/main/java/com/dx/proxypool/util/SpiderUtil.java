@@ -77,4 +77,9 @@ public class SpiderUtil {
         String html = HttpRequest.sendGet(url, null);
         return Jsoup.parse(html);
     }
+
+    public static Document getByHttpRequestOfProxy(String url, ProxyBean proxyBean) {
+        String html = HttpRequest.sendGet(url, proxyBean);
+        return Jsoup.parse(html);
+    }
 }

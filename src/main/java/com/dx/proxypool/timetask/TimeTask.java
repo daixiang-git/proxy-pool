@@ -38,29 +38,14 @@ public class TimeTask {
     private static final String QUICKCOMMONURL = "https://www.kuaidaili.com/free/intr/";
 
     @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
     private List<AnalysisService> analysisServices;
-
-    @Autowired
-    private AvailableService availableService;
 
     @Scheduled(cron = "0 0/10 * * * ?")
     public void mnProxy() throws IOException {
         logger.info("每10分钟执行抓取任务");
 
-        Document document = SpiderUtil.getByPhantomjs(MNURL);
-        if (document == null) {
-            return;
-        }
-        String lastProxy = (String) redisUtil.get("lastMN");
-        ProxyBean lastProxyBean = (ProxyBean) JSONObject.toBean(JSONObject.fromObject(lastProxy), ProxyBean.class);
-        List<ProxyBean> proxies = chooseService(ProxyTypeEnum.MN).analysisHtml(document, lastProxyBean);
-        if (!CollectionUtils.isEmpty(proxies)) {
-            redisUtil.add("lastMN", JSONObject.fromObject(proxies.get(0)).toString());
-        }
-        proxies.stream().forEach(b -> availableService.isAvailable(b));
+        List<ProxyBean> proxies = chooseService(ProxyTypeEnum.MN).spiderAndAnalysis();
+
     }
 
     private AnalysisService chooseService(ProxyTypeEnum type) {

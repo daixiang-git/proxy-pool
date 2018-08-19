@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by daixiang on 2018/8/2.
  */
@@ -24,5 +26,11 @@ public class AvailableServiceImpl implements AvailableService {
         if (SpiderUtil.isAvailable(proxyBean)) {
             redisUtil.add(proxyBean.getIp(), JSONObject.fromObject(proxyBean).toString());
         }
+    }
+
+    @Override
+    public void isAvailableOfList(List<ProxyBean> proxyBeanList) {
+        proxyBeanList.stream().filter(x -> SpiderUtil.isAvailable(x))
+                .forEach(proxyBean -> redisUtil.add(proxyBean.getIp(), JSONObject.fromObject(proxyBean).toString()));
     }
 }

@@ -1,11 +1,10 @@
 package com.dx.proxypool.service;
 
+import java.io.IOException;
 import java.util.List;
 
-import com.dx.proxypool.common.ProxyTypeEnum;
-import org.jsoup.nodes.Document;
-
 import com.dx.proxypool.bean.ProxyBean;
+import com.dx.proxypool.common.ProxyTypeEnum;
 
 /**
  * Created by daixiang on 2018/8/2.
@@ -13,13 +12,11 @@ import com.dx.proxypool.bean.ProxyBean;
 
 public interface AnalysisService {
     /**
-     * 解析html
+     * 爬取解析html
      *
-     * @param document
-     * @param lastProxyBean
      * @return
      */
-    List<ProxyBean> analysisHtml(Document document, ProxyBean lastProxyBean);
+    List<ProxyBean> spiderAndAnalysis() throws IOException;
 
     ProxyTypeEnum supportType();
 }

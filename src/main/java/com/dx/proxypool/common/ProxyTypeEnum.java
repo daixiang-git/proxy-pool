@@ -5,12 +5,22 @@ package com.dx.proxypool.common;
  */
 
 public enum ProxyTypeEnum {
-    QUICK("QUICKProxy"),
-    MN("MNProxy");
+    QUICK("QUICKProxy", "https://proxy.coderbusy.com/classical/country/cn.aspx"), MN("MNProxy", "");
 
-    ProxyTypeEnum(String name) {
+    ProxyTypeEnum(String name, String url) {
         this.name = name;
+        this.url = url;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     private String name;
+    private String url;
+
 }
